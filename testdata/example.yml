@@ -1,18 +1,21 @@
-quests:
-  init: 
-    - name: setup ssh keys
-    - name: setup go bin path
-    - name: gobin to path
-    - name: export gobin in your zshrc or bashrc
-  resources: 
-    - name: intranet
-      hint: Where all the service docs live
-      url: https://google.com 
-  install:
-    - name: go
-      hint: the language we use to write our services
-      action: brew install go
-  clone:
-    - name: dev-quest
-      hint: one of our go services
-      repo: git@github.com:tsharkey/dev-quest.git
+inits: 
+  - name: setup ssh keys
+  - name: setup go bin path
+  - name: gobin to path
+  - name: export gobin in your zshrc or bashrc
+  - name: do the other thing
+resources: 
+  - name: intranet
+    hint: Where all the service docs live
+    url: https://google.com 
+installs:
+  - name: go
+    hint: the language we use to write our services
+    action: brew install go
+  - name: visual studio code
+    hint: a development environment for writing go code
+    action: brew install visual-studio-code
+clones:
+  - name: dev-quest
+    hint: one of our go services
+    repo: git@github.com:tsharkey/dev-quest.git
