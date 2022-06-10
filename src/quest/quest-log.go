@@ -11,8 +11,8 @@ import (
 type QuestLog struct {
 	logFile string `yaml:"-"`
 
-	Resources Resources `yaml:"resources" mapstructure:"resources"`
-	Quests    Quests    `yaml:"quests" mapstructure:"quests"`
+	Resources  Resources  `yaml:"resources" mapstructure:"resources"`
+	StoryLines StoryLines `yaml:"storylines" mapstructure:"storylines"`
 }
 
 func GetQuestLog() (*QuestLog, error) {

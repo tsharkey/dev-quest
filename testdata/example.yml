@@ -1,31 +1,39 @@
-quests: 
-  setup ssh keys: # this is just a unique name
-    quest_text: "Let's add some ssh keys to your github account"
-    tasks:
-      - type: url
-        description: open github ssh url
-        action: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
-      - type: confirm
-        name: ssh key ready check
-        description: Have you completed adding a ssh keys to your github account
-  install golang:
-    quest_text: installing with brew
-    tasks: 
-      - type: cmd 
-        description: invoke brew
-        action: brew install golang
-      - type: url
-        description: open tour of go
-        optional: true
-        action: https://go.dev/tour/welcome/1
-  clone service:
-    quest_text: "git clone a repo"
-    tasks:
-      - type: cmd
-        description: clone the server
-        action: echo cloning some repo....
+storylines:
+  onboarding:
     depends_on:
-      - setup ssh keys
+      - setup
+    quests:
+      install golang:
+        quest_text: Install golang with brew
+        tasks:
+          - name: brew update
+            description: updating brew first
+            type: cmd
+            action: brew update
+          - name: brew install golang
+            description: install go at version 1.18
+            type: cmd
+            action: brew install go@1.18
+          - name: tour of golang
+            description: check out the tour of go
+            type: url
+            action: https://google.com
+      clone the app:
+        quest_text: set up where you want to clone all the repos
+        tasks:
+          - name: clone the app
+            description: use git to clone the app
+            type: cmd
+            action: git clone git@github.com:tsharkey/dev-quest.git {{ dev_dir }}
+  setup:
+    quests:
+      set dev dir:
+        quest_text: set up where you want to clone all the repos
+        tasks:
+          - name: set your dev directory
+            description: where all the repos will be cloned
+            type: 
+            action: git clone git@github.com:tsharkey/dev-quest.git {{ dev_dir }}
 resources: 
   - name: intranet
     description: Where all the service docs live
@@ -33,21 +41,5 @@ resources:
   - name: jira board
     description: where we track all of our work
     url: https://jira.com
-  - name: our portal
-    description: our website
-    url: https://google.com
-  - name: service monitoring
-    description: service health and monitoring
-    url: https://app.datadoghq.com
-  - name: aws
-    description: where our stuff runs
-    url: https://aws.com
-  - name: dev env
-    description: where our dev env lives
-    url: https://google.com
-  - name: go playground
-    description: test out some go code
-    url: https://go.dev/play/
-  - name: github
-    description: our github org
-    url: https://github.com/tsharkey
+
+
