@@ -1,18 +1,53 @@
-quests:
-  init: 
-    - name: setup ssh keys
-    - name: setup go bin path
-    - name: gobin to path
-    - name: export gobin in your zshrc or bashrc
-  resources: 
-    - name: intranet
-      hint: Where all the service docs live
-      url: https://google.com 
-  install:
-    - name: go
-      hint: the language we use to write our services
-      action: brew install go
-  clone:
-    - name: dev-quest
-      hint: one of our go services
-      repo: git@github.com:tsharkey/dev-quest.git
+quests: 
+  setup ssh keys: # this is just a unique name
+    quest_text: "Let's add some ssh keys to your github account"
+    tasks:
+      - type: url
+        description: open github ssh url
+        action: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
+      - type: confirm
+        name: ssh key ready check
+        description: Have you completed adding a ssh keys to your github account
+  install golang:
+    quest_text: installing with brew
+    tasks: 
+      - type: cmd 
+        description: invoke brew
+        action: brew install golang
+      - type: url
+        description: open tour of go
+        optional: true
+        action: https://go.dev/tour/welcome/1
+  clone service:
+    quest_text: "git clone a repo"
+    tasks:
+      - type: cmd
+        description: clone the server
+        action: echo cloning some repo....
+    depends_on:
+      - setup ssh keys
+resources: 
+  - name: intranet
+    description: Where all the service docs live
+    url: https://google.com 
+  - name: jira board
+    description: where we track all of our work
+    url: https://jira.com
+  - name: our portal
+    description: our website
+    url: https://google.com
+  - name: service monitoring
+    description: service health and monitoring
+    url: https://app.datadoghq.com
+  - name: aws
+    description: where our stuff runs
+    url: https://aws.com
+  - name: dev env
+    description: where our dev env lives
+    url: https://google.com
+  - name: go playground
+    description: test out some go code
+    url: https://go.dev/play/
+  - name: github
+    description: our github org
+    url: https://github.com/tsharkey
