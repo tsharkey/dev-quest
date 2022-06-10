@@ -9,3 +9,6 @@ grind: build
 
 resources: build
 	./bin/quest resources -l ./testdata/example.yml
+
+install: build
+	./bin/quest install -l ./testdata/example.yml -f

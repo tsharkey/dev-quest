@@ -6,46 +6,29 @@ package cmd
 
 import (
 	"dev-quest/src/quest"
-	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 )
 
-// grindCmd represents the grind command
 var grindCmd = &cobra.Command{
 	Use:   "grind",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Grind all available quests",
+	Long:  `Gets all available quests for the user to complete. You can choose one quest at a time to complete. Once a quest is completed the quest log will be updated and the user will be prompted to choose another quest. This happens until all quests are completed.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("grind called")
-
-		questLog, err := quest.NewQuestLog(cmd.Flag("logfile").Value.String())
+		questLog, err := quest.GetQuestLog()
 		if err != nil {
-			fmt.Println(err)
+			log.Fatalf("error getting quest log: %v", err)
+			return
 		}
 
 		err = questLog.Grind()
 		if err != nil {
-			fmt.Println(err)
+			log.Fatalf("error grinding quests: %s", err)
 		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(grindCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// grindCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// grindCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
