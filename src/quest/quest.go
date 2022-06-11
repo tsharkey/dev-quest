@@ -1,8 +1,6 @@
 package quest
 
-import "log"
-
-type Quests map[string]Quest
+type Quests map[string]*Quest
 
 type Dependecies []string
 
@@ -14,24 +12,29 @@ type Quest struct {
 	DependsOn Dependecies `yaml:"depends_on" mapstructure:"depends_on"`
 }
 
-func (q *Quest) Do() error {
-	for i, task := range q.Tasks {
+func (q *Quest) IsComplete() bool {
+	for _, task := range q.Tasks {
 		if !task.Completed {
-			if task.Optional {
-				err := confirm(task.Description)
-				if err != nil {
-					log.Printf("skipped optional task...")
-					completeTask(q.ID, i)
-					return nil
-				}
-			}
+			return false
+		}
+	}
 
+	q.Completed = true
+
+	return true
+}
+
+func (q *Quest) GetDependencies() []string {
+	return q.DependsOn
+}
+
+func (q *Quest) Do() error {
+	if !q.Tasks.Done() {
+		for _, task := range q.Tasks {
 			err := task.Do()
 			if err != nil {
 				return err
 			}
-
-			completeTask(q.ID, i)
 		}
 	}
 

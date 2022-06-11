@@ -36,21 +36,7 @@ func InstallFrom(baseConfigPath string) error {
 		return err
 	}
 
-	err = setQuestIDs()
-	if err != nil {
-		return err
-	}
-
 	return viper.WriteConfigAs(absPathify(FullConfigPath))
-}
-
-func setQuestIDs() error {
-	quests := viper.Get("quests").(map[string]interface{})
-	for questID := range quests {
-		viper.Set("quests."+questID+".id", questID)
-	}
-
-	return viper.WriteConfig()
 }
 
 func Delete() error {

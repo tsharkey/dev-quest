@@ -32,7 +32,10 @@ storylines:
         tasks:
           - name: set your dev directory
             description: where all the repos will be cloned
-            type: 
+            type: config
+            config_type: dir
+            config_key: dev_dir
+            default: .
             action: git clone git@github.com:tsharkey/dev-quest.git {{ dev_dir }}
 resources: 
   - name: intranet
