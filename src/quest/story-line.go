@@ -24,10 +24,6 @@ func (sl *StoryLine) GetDependencies() []string {
 	return sl.DependsOn
 }
 
-func (sls StoryLines) Select() (StoryLine, error) {
-	return StoryLine{}, nil
-}
-
 func (sl *StoryLine) Do() error {
 	if hasAvailable(sl.Quests) {
 		available, err := findAvailable(sl.Quests)
@@ -45,6 +41,8 @@ func (sl *StoryLine) Do() error {
 			return err
 		}
 	}
+
+	sl.Completed = true
 
 	return nil
 }

@@ -28,18 +28,25 @@ type Task struct {
 }
 
 func (t *Task) Do() error {
+	var err error
 	switch t.Type {
 	case "confirm":
-		return t.Confirm()
+		err = t.Confirm()
 	case "cmd":
-		return t.Cmd()
+		err = t.Cmd()
 	case "url":
-		return t.Url()
+		err = t.Url()
 	case "config":
-		return t.Config()
+		err = t.Config()
 	default:
 		return fmt.Errorf("unknown task type: %s", t.Type)
 	}
+
+	if err == nil {
+		t.Completed = true
+	}
+
+	return err
 }
 
 // TODO what should happen when the user says no

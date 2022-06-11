@@ -35,6 +35,8 @@ func (q *Quest) Do() error {
 			if err != nil {
 				return err
 			}
+
+			task.Completed = true
 		}
 	}
 
