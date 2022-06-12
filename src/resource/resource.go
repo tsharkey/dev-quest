@@ -1,12 +1,10 @@
 package resource
 
 import (
+	"dev-quest/src/util"
 	"fmt"
-	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/pkg/browser"
-	"github.com/spf13/viper"
 )
 
 type Resources []Resource
@@ -17,23 +15,8 @@ type Resource struct {
 	URL         string `yaml:"url"`
 }
 
-func GetResources() (*Resources, error) {
-	resources := new(Resources)
-	err := viper.UnmarshalKey("resources", resources)
-	return resources, err
-}
-
 func (resources Resources) Display() error {
-	prompt := promptui.Select{
-		Label: "Select a resource",
-		Items: resources.displayStrings(),
-		Searcher: func(input string, index int) bool {
-			return strings.Contains(resources[index].Name, input)
-		},
-		StartInSearchMode: true,
-	}
-
-	ix, _, err := prompt.Run()
+	_, ix, err := util.Select("Select a resource", resources.displayStrings(), nil)
 	if err != nil {
 		return err
 	}

@@ -2,7 +2,6 @@ package quest
 
 import (
 	"bytes"
-	"dev-quest/src/userconfig"
 	"dev-quest/src/util"
 	"fmt"
 	"log"
@@ -12,19 +11,19 @@ import (
 	"time"
 
 	"github.com/briandowns/spinner"
-	"github.com/manifoldco/promptui"
+	"github.com/osteele/liquid"
 	"github.com/pkg/browser"
 	"github.com/spf13/viper"
-	"gopkg.in/osteele/liquid.v1"
 )
 
 type Tasks []*Task
 
 type Task struct {
+	// TODO: check if mapstructure supports omitempty, also setup validation with go playground validator
 	Type        string `yaml:"type" mapstructure:"type"` // one of response, select, cmd, url, clone, confirm
 	Action      string `yaml:"action" mapstructure:"action"`
 	Description string `yaml:"description" mapstructure:"description"`
-	Optional    bool   `yaml:"optional" mapstructure:"optional"`
+	Optional    bool   `yaml:"optional" mapstructure:"optional,"`
 	Completed   bool   `yaml:"completed" mapstructure:"completed"`
 	ConfigKey   string `yaml:"config_key" mapstructure:"config_key"`
 	ConfigType  string `yaml:"config_type" mapstructure:"config_type"`
@@ -39,7 +38,7 @@ func (t *Task) Do() error {
 	var err error
 
 	if t.Optional && !t.Completed {
-		err = util.Confirm("Do you want to do this task?")
+		err = util.Confirm("Do you want to do this task")
 		if err != nil {
 			return nil
 		}
@@ -79,7 +78,11 @@ func (t *Task) Cmd() error {
 	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
 	s.Start()
 
-	resolved := resolveCommandTemplateVars(t.Action)
+	resolved, err := resolveCommandTemplateVars(t.Action)
+	if err != nil {
+		return err
+	}
+
 	args := strings.Split(resolved, " ")
 	cmd := exec.Command(args[0], args[1:]...)
 	stdErr, err := cmd.StderrPipe()
@@ -108,27 +111,13 @@ func (t *Task) Url() error {
 }
 
 func (t *Task) Config() error {
-	prompt := promptui.Prompt{
-		Label:   "Enter value for " + t.ConfigKey,
-		Default: t.Default,
-		Validate: func(input string) error {
-			switch t.ConfigType {
-			case "dir":
-				if _, err := os.Stat(input); err != nil {
-					return fmt.Errorf("value does not exist")
-				}
-			}
-
-			return nil
-		},
-	}
-
-	value, err := prompt.Run()
+	res, err := util.GetResponse(t.Description, t.Default, t.validateConfigResponse())
 	if err != nil {
 		return err
 	}
 
-	return userconfig.Set(t.ConfigKey, value)
+	viper.Set("user_config."+t.ConfigKey, res)
+	return viper.WriteConfig()
 }
 
 /******************************************************************************
@@ -157,26 +146,36 @@ func (ts *Tasks) GetAvailable() Tasks {
 	return available
 }
 
-// TODO: clean this up- no panics
-func resolveCommandTemplateVars(cmd string) string {
+func resolveCommandTemplateVars(cmd string) (string, error) {
 	if strings.Contains(cmd, "{{") {
-		availbleBindings := map[string]interface{}{}
 		eng := liquid.NewEngine()
 		template := cmd
-		err := viper.UnmarshalKey("user_config", &availbleBindings)
-		if err != nil {
-			panic(err)
-		}
 
-		out, err := eng.ParseAndRenderString(template, availbleBindings)
+		// get the user config from viper
+		userConfig := viper.GetStringMap("user_config")
+
+		out, err := eng.ParseAndRenderString(template, userConfig)
 		if err != nil {
-			panic(err)
+			return "", err
 		}
 
 		log.Printf("[DEBUG] resolved command template: %s", out)
 
-		return out
+		return out, nil
 	}
 
-	return cmd
+	return cmd, nil
+}
+
+func (t *Task) validateConfigResponse() func(string) error {
+	return func(input string) error {
+		switch t.ConfigType {
+		case "dir":
+			if _, err := os.Stat(input); err != nil {
+				return fmt.Errorf("value does not exist")
+			}
+		}
+
+		return nil
+	}
 }
