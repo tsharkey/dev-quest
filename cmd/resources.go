@@ -5,7 +5,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"dev-quest/src/resource"
+	"dev-quest/src/game"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -17,7 +17,7 @@ var resourcesCmd = &cobra.Command{
 	Short: "List all the resources for the user",
 	Long:  `A collection of urls for the user to reference at any point in time`,
 	Run: func(cmd *cobra.Command, args []string) {
-		resources, err := resource.GetResources()
+		resources, err := game.LoadResources()
 		if err != nil {
 			log.Fatalf("Error getting resources: %s", err)
 		}

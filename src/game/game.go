@@ -1,26 +1,22 @@
 package game
 
 import (
-	"dev-quest/src/gamestate"
 	"dev-quest/src/quest"
 	"dev-quest/src/util"
 	"fmt"
 )
 
 type Game struct {
-	StateManager *gamestate.StateManager
-	StoryLines   quest.StoryLines
+	StoryLines quest.StoryLines
 }
 
-func NewGame(sm *gamestate.StateManager) *Game {
-	return &Game{
-		StateManager: sm,
-	}
+func NewGame() *Game {
+	return &Game{}
 }
 
 func (g *Game) init() error {
 	var err error
-	g.StoryLines, err = g.StateManager.LoadStoryLines()
+	g.StoryLines, err = LoadStoryLines()
 	if err != nil {
 		return err
 	}
@@ -39,14 +35,14 @@ func (g *Game) Start() error {
 
 	// gets available storylines and refreshes at every iteration
 	for availableStoryLines := g.StoryLines.GetAvailable(); len(availableStoryLines) > 0; availableStoryLines = g.StoryLines.GetAvailable() {
-		chosenStoryLine, err := util.SelectOpt(availableStoryLines, "Please choose a story line to start:", nil)
+		chosenStoryLine, err := util.SelectOptFromMap(availableStoryLines, "Please choose a story line to start", nil)
 		if err != nil {
 			return err
 		}
 
 		// gets available quests and refreshes at every iteration
 		for availableQuests := chosenStoryLine.Quests.GetAvailable(); len(availableQuests) > 0; availableQuests = chosenStoryLine.Quests.GetAvailable() {
-			chosenQuest, err := util.SelectOpt(availableQuests, "Please choose a quest to start:", nil)
+			chosenQuest, err := util.SelectOptFromMap(availableQuests, "Please choose a quest to start", nil)
 			if err != nil {
 				return err
 			}
@@ -60,7 +56,7 @@ func (g *Game) Start() error {
 
 					task.Completed = true
 
-					if err := g.Save(); err != nil {
+					if err := SaveStoryLines(g.StoryLines); err != nil {
 						return err
 					}
 
@@ -68,7 +64,7 @@ func (g *Game) Start() error {
 
 				chosenQuest.Completed = true
 
-				if err := g.Save(); err != nil {
+				if err := SaveStoryLines(g.StoryLines); err != nil {
 					return err
 				}
 			}
@@ -76,19 +72,11 @@ func (g *Game) Start() error {
 
 		chosenStoryLine.Completed = true
 
-		if err := g.Save(); err != nil {
+		if err := SaveStoryLines(g.StoryLines); err != nil {
 			return err
 		}
 	}
 
+	// TODO add some error types
 	return fmt.Errorf("game complete")
-}
-
-func (g *Game) Save() error {
-	err := g.StateManager.SaveStoryLines(g.StoryLines)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

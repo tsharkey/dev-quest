@@ -37,7 +37,6 @@ storylines:
             config_type: dir
             config_key: dev_dir
             default: .
-            action: git clone git@github.com:tsharkey/dev-quest.git {{ dev_dir }}
 resources: 
   - name: intranet
     description: Where all the service docs live

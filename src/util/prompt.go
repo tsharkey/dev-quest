@@ -26,28 +26,51 @@ func Confirm(label string) error {
 	return nil
 }
 
-func SelectOpt[V any](m map[string]V, label string, searcher func(string, int) bool) (V, error) {
+func SelectOptFromMap[V any](m map[string]V, label string, searcher func(string, int) bool) (V, error) {
 	names := Keys(m)
 
+	// TODO: figure out how to return an empty generic value if possible
+	choice, _, err := Select(label, names, searcher)
+	if err != nil {
+		log.Fatalf("Error selecting from map: %s", err)
+	}
+
+	return m[choice], nil
+}
+
+func Select(label string, items []string, searcher func(string, int) bool) (string, int, error) {
 	if searcher == nil {
 		searcher = func(input string, index int) bool {
-			return strings.Contains(names[index], input)
+			return strings.Contains(items[index], input)
 		}
 	}
 
 	prompt := promptui.Select{
 		Label:             label,
-		Items:             names,
+		Items:             items,
 		Searcher:          searcher,
 		StartInSearchMode: true,
 	}
 
 	ix, _, err := prompt.Run()
 	if err != nil {
-		// TODO how can we fit this with generics
-		log.Fatalf("Something went wrong with your selection: %v", err)
-		// return V, err
+		return "", ix, err
 	}
 
-	return m[names[ix]], nil
+	return items[ix], ix, nil
+}
+
+func GetResponse(label string, defaultVal string, validate func(input string) error) (string, error) {
+	prompt := promptui.Prompt{
+		Label:    label,
+		Default:  defaultVal,
+		Validate: validate,
+	}
+
+	res, err := prompt.Run()
+	if err != nil {
+		return "", err
+	}
+
+	return res, nil
 }
