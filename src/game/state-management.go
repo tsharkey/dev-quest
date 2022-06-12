@@ -19,7 +19,7 @@ const (
 
 	ConfigKeyResources  = "resources"
 	ConfigKeyUserConfig = "user_config"
-	ConfigKeyStoryLines = "story_lines"
+	ConfigKeyStoryLines = "storylines"
 )
 
 func SaveStoryLines(sls quest.StoryLines) error {
