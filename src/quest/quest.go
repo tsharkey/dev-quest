@@ -5,10 +5,10 @@ type Quests map[string]*Quest
 type Dependecies []string
 
 type Quest struct {
-	QuestText string      `yaml:"quest_text" mapstructure:"quest_text"`
-	Tasks     Tasks       `yaml:"tasks" mapstructure:"tasks"`
-	Completed bool        `yaml:"completed" mapstructure:"completed"`
-	DependsOn Dependecies `yaml:"depends_on" mapstructure:"depends_on"`
+	Description string      `yaml:"description" mapstructure:"description"`
+	Tasks       Tasks       `yaml:"tasks" mapstructure:"tasks"`
+	Completed   bool        `yaml:"completed" mapstructure:"completed"`
+	DependsOn   Dependecies `yaml:"depends_on" mapstructure:"depends_on"`
 }
 
 func (q *Quest) IsComplete() bool {

@@ -4,7 +4,7 @@ storylines:
       - setup
     quests:
       install golang:
-        quest_text: Install golang with brew
+        description: Install golang with brew
         tasks:
           - name: brew update
             description: updating brew first

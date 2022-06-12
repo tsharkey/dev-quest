@@ -7,7 +7,7 @@ import (
 )
 
 type Game struct {
-	StoryLines quest.StoryLines
+	Storylines quest.Storylines
 }
 
 func NewGame() *Game {
@@ -16,7 +16,7 @@ func NewGame() *Game {
 
 func (g *Game) init() error {
 	var err error
-	g.StoryLines, err = LoadStoryLines()
+	g.Storylines, err = LoadStorylines()
 	if err != nil {
 		return err
 	}
@@ -34,14 +34,14 @@ func (g *Game) Start() error {
 	fmt.Println("")
 
 	// gets available storylines and refreshes at every iteration
-	for availableStoryLines := g.StoryLines.GetAvailable(); len(availableStoryLines) > 0; availableStoryLines = g.StoryLines.GetAvailable() {
-		chosenStoryLine, err := util.SelectOptFromMap(availableStoryLines, "Please choose a story line to start", nil)
+	for availableStorylines := g.Storylines.GetAvailable(); len(availableStorylines) > 0; availableStorylines = g.Storylines.GetAvailable() {
+		chosenStoryline, err := util.SelectOptFromMap(availableStorylines, "Please choose a story line to start", nil)
 		if err != nil {
 			return err
 		}
 
 		// gets available quests and refreshes at every iteration
-		for availableQuests := chosenStoryLine.Quests.GetAvailable(); len(availableQuests) > 0; availableQuests = chosenStoryLine.Quests.GetAvailable() {
+		for availableQuests := chosenStoryline.Quests.GetAvailable(); len(availableQuests) > 0; availableQuests = chosenStoryline.Quests.GetAvailable() {
 			chosenQuest, err := util.SelectOptFromMap(availableQuests, "Please choose a quest to start", nil)
 			if err != nil {
 				return err
@@ -56,7 +56,7 @@ func (g *Game) Start() error {
 
 					task.Completed = true
 
-					if err := SaveStoryLines(g.StoryLines); err != nil {
+					if err := SaveStorylines(g.Storylines); err != nil {
 						return err
 					}
 
@@ -64,15 +64,15 @@ func (g *Game) Start() error {
 
 				chosenQuest.Completed = true
 
-				if err := SaveStoryLines(g.StoryLines); err != nil {
+				if err := SaveStorylines(g.Storylines); err != nil {
 					return err
 				}
 			}
 		}
 
-		chosenStoryLine.Completed = true
+		chosenStoryline.Completed = true
 
-		if err := SaveStoryLines(g.StoryLines); err != nil {
+		if err := SaveStorylines(g.Storylines); err != nil {
 			return err
 		}
 	}

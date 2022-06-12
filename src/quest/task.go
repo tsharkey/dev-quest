@@ -22,6 +22,7 @@ type Task struct {
 	// TODO: check if mapstructure supports omitempty, also setup validation with go playground validator
 	Type        string `yaml:"type" mapstructure:"type"` // one of response, select, cmd, url, clone, confirm
 	Action      string `yaml:"action" mapstructure:"action"`
+	Name        string `yaml:"name" mapstructure:"name"`
 	Description string `yaml:"description" mapstructure:"description"`
 	Optional    bool   `yaml:"optional" mapstructure:"optional,"`
 	Completed   bool   `yaml:"completed" mapstructure:"completed"`
@@ -36,6 +37,8 @@ type Task struct {
 
 func (t *Task) Do() error {
 	var err error
+
+	log.Printf("Starting task: %s", t.Description)
 
 	if t.Optional && !t.Completed {
 		err = util.Confirm("Do you want to do this task")

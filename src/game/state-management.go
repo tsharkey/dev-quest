@@ -19,17 +19,17 @@ const (
 
 	ConfigKeyResources  = "resources"
 	ConfigKeyUserConfig = "user_config"
-	ConfigKeyStoryLines = "storylines"
+	ConfigKeyStorylines = "storylines"
 )
 
-func SaveStoryLines(sls quest.StoryLines) error {
-	viper.Set(ConfigKeyStoryLines, sls)
+func SaveStorylines(sls quest.Storylines) error {
+	viper.Set(ConfigKeyStorylines, sls)
 	return viper.WriteConfig()
 }
 
-func LoadStoryLines() (quest.StoryLines, error) {
-	sls := new(quest.StoryLines)
-	return *sls, viper.UnmarshalKey(ConfigKeyStoryLines, sls)
+func LoadStorylines() (quest.Storylines, error) {
+	sls := new(quest.Storylines)
+	return *sls, viper.UnmarshalKey(ConfigKeyStorylines, sls)
 }
 
 func LoadResources() (resource.Resources, error) {
