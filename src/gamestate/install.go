@@ -1,4 +1,4 @@
-package config
+package gamestate
 
 import (
 	"bytes"
@@ -36,7 +36,7 @@ func InstallFrom(baseConfigPath string) error {
 		return err
 	}
 
-	return viper.WriteConfigAs(absPathify(FullConfigPath))
+	return viper.WriteConfigAs(getAbsolutePath(FullConfigPath))
 }
 
 func Delete() error {
@@ -48,7 +48,8 @@ func Delete() error {
 	return nil
 }
 
-func absPathify(inPath string) string {
+// TODO: allow this to use any env var to get the absolute path
+func getAbsolutePath(inPath string) string {
 	if inPath == "$HOME" || strings.HasPrefix(inPath, "$HOME"+string(os.PathSeparator)) {
 		inPath = userHomeDir() + inPath[5:]
 	}

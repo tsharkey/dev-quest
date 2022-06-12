@@ -5,7 +5,6 @@ type Quests map[string]*Quest
 type Dependecies []string
 
 type Quest struct {
-	ID        string      `yaml:"id" mapstructure:"id"`
 	QuestText string      `yaml:"quest_text" mapstructure:"quest_text"`
 	Tasks     Tasks       `yaml:"tasks" mapstructure:"tasks"`
 	Completed bool        `yaml:"completed" mapstructure:"completed"`
@@ -13,7 +12,8 @@ type Quest struct {
 }
 
 func (q *Quest) IsComplete() bool {
-	for _, task := range q.Tasks {
+	for _, t := range q.Tasks {
+		task := t
 		if !task.Completed {
 			return false
 		}
@@ -28,17 +28,16 @@ func (q *Quest) GetDependencies() []string {
 	return q.DependsOn
 }
 
-func (q *Quest) Do() error {
-	if !q.Tasks.Done() {
-		for _, task := range q.Tasks {
-			err := task.Do()
-			if err != nil {
-				return err
-			}
-
-			task.Completed = true
+func (q *Quests) IsComplete() bool {
+	for _, q := range *q {
+		if !q.IsComplete() {
+			return false
 		}
 	}
 
-	return nil
+	return true
+}
+
+func (q Quests) GetAvailable() Quests {
+	return findAvailable(q)
 }

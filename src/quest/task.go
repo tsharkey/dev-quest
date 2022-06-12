@@ -2,7 +2,10 @@ package quest
 
 import (
 	"bytes"
+	"dev-quest/src/userconfig"
+	"dev-quest/src/util"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -12,9 +15,10 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/browser"
 	"github.com/spf13/viper"
+	"gopkg.in/osteele/liquid.v1"
 )
 
-type Tasks []Task
+type Tasks []*Task
 
 type Task struct {
 	Type        string `yaml:"type" mapstructure:"type"` // one of response, select, cmd, url, clone, confirm
@@ -27,8 +31,20 @@ type Task struct {
 	Default     string `yaml:"default" mapstructure:"default"`
 }
 
+/******************************************************************************
+ * Task Actions
+ ******************************************************************************/
+
 func (t *Task) Do() error {
 	var err error
+
+	if t.Optional && !t.Completed {
+		err = util.Confirm("Do you want to do this task?")
+		if err != nil {
+			return nil
+		}
+	}
+
 	switch t.Type {
 	case "confirm":
 		err = t.Confirm()
@@ -51,7 +67,7 @@ func (t *Task) Do() error {
 
 // TODO what should happen when the user says no
 func (t *Task) Confirm() error {
-	err := confirm(t.Description)
+	err := util.Confirm(t.Description)
 	if err != nil {
 		return err
 	}
@@ -63,7 +79,8 @@ func (t *Task) Cmd() error {
 	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
 	s.Start()
 
-	args := strings.Split(t.Action, " ")
+	resolved := resolveCommandTemplateVars(t.Action)
+	args := strings.Split(resolved, " ")
 	cmd := exec.Command(args[0], args[1:]...)
 	stdErr, err := cmd.StderrPipe()
 	if err != nil {
@@ -111,16 +128,55 @@ func (t *Task) Config() error {
 		return err
 	}
 
-	viper.Set(t.ConfigKey, value)
-	return viper.WriteConfig()
+	return userconfig.Set(t.ConfigKey, value)
 }
 
-func (t Tasks) Done() bool {
-	for _, task := range t {
-		if !task.Completed {
+/******************************************************************************
+ * Task(s) Utility
+ ******************************************************************************/
+
+func (ts *Tasks) IsComplete() bool {
+	for _, t := range *ts {
+		if !t.Completed {
 			return false
 		}
 	}
 
 	return true
+}
+
+func (ts *Tasks) GetAvailable() Tasks {
+	available := Tasks{}
+
+	for _, t := range *ts {
+		if !t.Completed {
+			available = append(available, t)
+		}
+	}
+
+	return available
+}
+
+// TODO: clean this up- no panics
+func resolveCommandTemplateVars(cmd string) string {
+	if strings.Contains(cmd, "{{") {
+		availbleBindings := map[string]interface{}{}
+		eng := liquid.NewEngine()
+		template := cmd
+		err := viper.UnmarshalKey("user_config", &availbleBindings)
+		if err != nil {
+			panic(err)
+		}
+
+		out, err := eng.ParseAndRenderString(template, availbleBindings)
+		if err != nil {
+			panic(err)
+		}
+
+		log.Printf("[DEBUG] resolved command template: %s", out)
+
+		return out
+	}
+
+	return cmd
 }

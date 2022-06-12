@@ -9,7 +9,8 @@ type StoryLine struct {
 }
 
 func (sl *StoryLine) IsComplete() bool {
-	for _, quest := range sl.Quests {
+	for _, q := range sl.Quests {
+		quest := q
 		if !quest.Completed {
 			return false
 		}
@@ -24,25 +25,16 @@ func (sl *StoryLine) GetDependencies() []string {
 	return sl.DependsOn
 }
 
-func (sl *StoryLine) Do() error {
-	if hasAvailable(sl.Quests) {
-		available, err := findAvailable(sl.Quests)
-		if err != nil {
-			return err
-		}
-
-		choice, err := selectOpt(available, "Please choose a quest", nil)
-		if err != nil {
-			return err
-		}
-
-		err = choice.Do()
-		if err != nil {
-			return err
+func (sl StoryLines) IsComplete() bool {
+	for _, sl := range sl {
+		if !sl.IsComplete() {
+			return false
 		}
 	}
 
-	sl.Completed = true
+	return true
+}
 
-	return nil
+func (sl StoryLines) GetAvailable() StoryLines {
+	return findAvailable(sl)
 }

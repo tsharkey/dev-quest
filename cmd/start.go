@@ -5,7 +5,8 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"dev-quest/src/quest"
+	"dev-quest/src/game"
+	"dev-quest/src/gamestate"
 	"fmt"
 	"log"
 
@@ -25,15 +26,15 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("start called")
 
-		ql, err := quest.GetQuestLog()
+		sm := gamestate.NewStateManager()
+
+		g := game.NewGame(sm)
+		err := g.Start()
 		if err != nil {
-			log.Fatalf("error getting quest log: %v", err)
+			log.Fatalf("error: %v", err)
 		}
 
-		err = ql.Start()
-		if err != nil {
-			log.Fatalf("error starting quest: %v", err)
-		}
+		return
 	},
 }
 

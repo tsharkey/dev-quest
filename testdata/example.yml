@@ -17,6 +17,7 @@ storylines:
           - name: tour of golang
             description: check out the tour of go
             type: url
+            optional: true
             action: https://google.com
       clone the app:
         quest_text: set up where you want to clone all the repos
