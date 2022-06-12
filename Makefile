@@ -4,8 +4,8 @@ build:
 build-run: build
 	./bin/quest
 
-grind: build
-	./bin/quest grind -l ./testdata/example.yml
+start: build
+	./bin/quest start
 
 resources: build
 	./bin/quest resources -l ./testdata/example.yml

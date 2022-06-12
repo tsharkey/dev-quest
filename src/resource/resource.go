@@ -1,4 +1,4 @@
-package quest
+package resource
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/browser"
+	"github.com/spf13/viper"
 )
 
 type Resources []Resource
@@ -14,6 +15,12 @@ type Resource struct {
 	Name        string `yaml:"name"`
 	Description string `yaml:"description"`
 	URL         string `yaml:"url"`
+}
+
+func GetResources() (*Resources, error) {
+	resources := new(Resources)
+	err := viper.UnmarshalKey("resources", resources)
+	return resources, err
 }
 
 func (resources Resources) Display() error {

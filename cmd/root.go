@@ -5,7 +5,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"dev-quest/src/config"
+	"dev-quest/src/gamestate"
 	"log"
 	"os"
 
@@ -31,15 +31,12 @@ func Execute() {
 func init() {
 	rootCmd.PersistentFlags().StringP("logfile", "l", "./quest.yml", "the yaml file to build the questlog from")
 
-	viper.SetConfigType(config.FileType)
-	viper.SetConfigName(config.FileName)
-	viper.AddConfigPath(config.ConfigPath)
+	viper.SetConfigType(gamestate.FileType)
+	viper.SetConfigName(gamestate.FileName)
+	viper.AddConfigPath(gamestate.ConfigPath)
 
 	err := viper.ReadInConfig()
 	if err != nil {
 		log.Fatalf("Error reading config... have you installed your quest file yet? %s", err)
 	}
-
-	log.Printf("using: %s", viper.ConfigFileUsed())
-
 }
