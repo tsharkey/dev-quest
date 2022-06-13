@@ -1,4 +1,6 @@
-# {{ .Name }}
+package export
+
+var Markdown = `# {{ .Name }}
 {{ .Description }}
 {{ range $slKey, $slValues := .Storylines }}
 - [{{ $slKey }}](#{{ $slKey | replace " " "-" }}){{ range $questKey, $questVal := $slValues.Quests }}
@@ -17,3 +19,4 @@
 ## [{{ $resource.Name }}]({{$resource.URL}})
 {{ $resource.Description }}
 {{ end }}
+`
