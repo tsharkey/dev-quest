@@ -1,3 +1,5 @@
+name: New Employee onboarding
+description: step by step guide to onboard at our company
 storylines:
   onboarding:
     depends_on:

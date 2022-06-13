@@ -12,3 +12,6 @@ resources: build
 
 install: build
 	./bin/quest install -l ./testdata/example.yml -f
+
+export: build
+	./bin/quest export

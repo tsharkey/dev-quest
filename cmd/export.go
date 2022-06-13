@@ -5,9 +5,16 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"dev-quest/src/game"
 	"fmt"
+	"html/template"
+	"io/ioutil"
+	"log"
+	"os"
 
+	"github.com/Masterminds/sprig/v3"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // TODO: allows the user to export config to an md file
@@ -23,6 +30,29 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("export called")
+		g := new(game.Game)
+		err := viper.Unmarshal(g)
+		if err != nil {
+			log.Fatalf("error: %v", err)
+		}
+
+		log.Printf("%+v", g)
+
+		by, err := ioutil.ReadFile("./templates/base.md")
+
+		t, err := template.New("export").Funcs(sprig.FuncMap()).Parse(string(by))
+
+		// write template to file
+		f, err := os.Create("./export.md")
+		if err != nil {
+			log.Fatalf("error: %v", err)
+		}
+		defer f.Close()
+
+		err = t.Execute(f, g)
+		if err != nil {
+			log.Fatalf("error: %v", err)
+		}
 	},
 }
 
