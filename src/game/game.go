@@ -2,12 +2,16 @@ package game
 
 import (
 	"dev-quest/src/quest"
+	"dev-quest/src/resource"
 	"dev-quest/src/util"
 	"fmt"
 )
 
 type Game struct {
-	Storylines quest.Storylines
+	Name        string             `yaml:"name" mapstructure:"name"`
+	Description string             `yaml:"description" mapstructure:"description"`
+	Storylines  quest.Storylines   `yaml:"storylines" mapstructure:"storylines"`
+	Resources   resource.Resources `yaml:"resources" mapstructure:"resources"`
 }
 
 func NewGame() *Game {
