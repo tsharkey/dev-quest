@@ -21,13 +21,73 @@ storylines:
             type: url
             optional: true
             action: https://google.com
-      clone the app:
-        quest_text: set up where you want to clone all the repos
-        tasks:
-          - name: clone the app
-            description: use git to clone the app
+      install slack:
+        description: where we communicate as a company
+        tasks: 
+          - name: download slack
             type: cmd
-            action: git clone git@github.com:tsharkey/dev-quest.git {{ dev_dir }}
+            action: brew install slack
+      install vs code:
+        description: an editor
+        tasks:
+          - name: install vs code
+            type: cmd
+            action: brew install visual-studio-code
+      install twingate:
+        description: our vpn
+        tasks:
+          - name: login to the mac app store application and download the twingate app
+            description: "please login to the mac app store and confirm once you are done"
+            type: confirm
+      install zoom:
+        description: where we have our meetings
+        tasks:
+          - name: brew install zoom
+            type: cmd
+            action: brew install zoom
+      install postman:
+        description: a tool for running requests against our services
+        tasks:
+          - name: brew install postman
+            type: cmd
+            action: brew install postman
+          - name: get an account
+            description: reach out to Tom and he can add you, once done come back here and confirm completion
+            type: confirm
+      
+      clone all the repos:
+        description: do some stuff
+        tasks:
+          - name: git clone 1
+            action: git clone 1
+            type: cmd
+          - name: git clone another
+            type: cmd
+            action: git clone something else
+          - name: git clone 3
+            type: cmd
+            action: git clone ad-service
+          - name: git clone more
+            type: cmd
+            action: git clone some other service
+      create a dockerhub account:
+        description: our container repository
+        tasks: 
+          - name: dockerhub sign up
+            type: url
+            url: hub.docker.com
+          - name: create an account
+            description: create an account an account and come back here after to confirm you are done
+            type: confirm
+          - name: get added to the org
+            type: confirm
+            description: reach out to Tom to have him add you to the org
+      get added to dev org github:
+        description: have someone add you to the dev org in github
+        tasks:
+          - name: wait for add
+            type: confirm 
+            description: ask Tom to add you to the github devopers team
   setup:
     quests:
       set dev dir:
@@ -46,5 +106,16 @@ resources:
   - name: jira board
     description: where we track all of our work
     url: https://jira.com
+  - name: go playground
+    url: htts://go.dev/play/
+  - name: datadog
+    description: where we monitor all of our services
+    url: https://app.datadoghq.com
+  - name: go by example
+    description: a collection of golang examples for common problems and patterns
+    url: https://gobyexample.com/
+  - name: dockerhub
+    description: our container repository
+    url: https://hub.docker.com/
 
 

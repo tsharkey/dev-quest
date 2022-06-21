@@ -6,7 +6,7 @@ var Markdown = `# {{ .Name }}
 - [{{ $slKey }}](#{{ $slKey | replace " " "-" }}){{ range $questKey, $questVal := $slValues.Quests }}
   - [{{ $questKey }}](#{{ $questKey | replace " " "-" }}){{ end }}{{end}}
 {{ range $slKey, $slValues := .Storylines }}
-## {{ $slKey }} {#{{ $slKey }}}
+## {{ $slKey }}
 {{ range $questKey, $questValues :=  $slValues.Quests }}
 ### {{ $questKey }}
 {{ range $task := $questValues.Tasks }}- [ ] {{ $task.Name }}
