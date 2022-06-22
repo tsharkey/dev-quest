@@ -25,7 +25,7 @@ var installCmd = &cobra.Command{
 		}
 
 		// check if the .dev-quest file exists if not create it
-		if _, err := os.Stat(); err != nil {
+		if _, err := os.Stat("~/.dev-quest"); err != nil {
 			if os.IsNotExist(err) {
 				_, err := os.Create("~/.dev-quest")
 				if err != nil {
