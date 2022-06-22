@@ -7,7 +7,6 @@ package cmd
 import (
 	"dev-quest/src/game"
 	"log"
-	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -21,16 +20,6 @@ var installCmd = &cobra.Command{
 			err := game.Delete()
 			if err != nil {
 				log.Fatalf("Error deleting questing: %s", err)
-			}
-		}
-
-		// check if the .dev-quest file exists if not create it
-		if _, err := os.Stat("~/.dev-quest"); err != nil {
-			if os.IsNotExist(err) {
-				_, err := os.Create("~/.dev-quest")
-				if err != nil {
-					log.Fatalf("Error creating required config file: %s", err)
-				}
 			}
 		}
 

@@ -46,9 +46,24 @@ func (g *Game) Start() error {
 
 		// gets available quests and refreshes at every iteration
 		for availableQuests := chosenStoryline.Quests.GetAvailable(); len(availableQuests) > 0; availableQuests = chosenStoryline.Quests.GetAvailable() {
+
 			chosenQuest, err := util.SelectOptFromMap(availableQuests, "Please choose a quest to start", nil)
 			if err != nil {
 				return err
+			}
+
+			choice, _, err := util.Select("What would you like to do", []string{"start", "skip", "quit"}, nil)
+			if err != nil {
+				return err
+			}
+
+			switch choice {
+			case "start":
+				// nothing to do
+			case "skip":
+				chosenQuest.Completed = true
+			case "quit":
+				return nil
 			}
 
 			for !chosenQuest.IsComplete() {

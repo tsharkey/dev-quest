@@ -12,6 +12,10 @@ type Quest struct {
 }
 
 func (q *Quest) IsComplete() bool {
+	if q.Completed {
+		return true
+	}
+
 	for _, t := range q.Tasks {
 		task := t
 		if !task.Completed {
